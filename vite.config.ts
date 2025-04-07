@@ -1,8 +1,26 @@
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
+import path from "path";
 import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths(), tailwindcss()],
+  build: {
+    lib: {
+      entry: path.resolve(__dirname, "src/index.ts"),
+      name: "formx",
+      formats: ["es", "cjs"],
+      fileName: (format) => {
+        if (format === "es") return "index.mjs";
+        if (format === "cjs") return "index.js";
+        return `index.${format}.js`;
+      },
+    },
+    rollupOptions: {
+      external: ["rxjs"],
+      output: {
+        globals: {
+          rxjs: "rxjs",
+        },
+      },
+    },
+    sourcemap: true,
+  },
 });

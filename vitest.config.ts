@@ -3,14 +3,14 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     environment: "jsdom",
-    include: ["src/**/*.{test,spec}.{jsx,tsx}"],
+    include: ["src/**/*.{test,spec}.{js,ts}"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],
-      reportsDirectory: "coverage/dom",
+      reportsDirectory: "coverage",
       include: ["src/**/*.{jsx,tsx}"],
       exclude: [
-        "src/**/*.{test,spec}.{jsx,tsx}",
+        "src/**/*.{test,spec}.{js,ts}",
         "coverage/",
         "node_modules/",
         "dist/",

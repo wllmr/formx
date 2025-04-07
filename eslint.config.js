@@ -1,48 +1,35 @@
-import eslintConfigPrettier from "eslint-config-prettier";
 import eslintPluginPrettier from "eslint-plugin-prettier";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config([
+export default [
+  ...tseslint.configs.recommended,
   {
-    files: ["**/*.{ts,tsx}"],
-    ignores: ["node_modules/", "dist/", "build/", "coverage/", ".git/"],
-    plugins: {
-      prettier: eslintPluginPrettier,
-    },
-    extends: [
-      "plugin:@typescript-eslint/recommended-type-checked",
-      "plugin:@typescript-eslint/strict-type-checked",
-      "plugin:@typescript-eslint/stylistic-type-checked",
-      "plugin:prettier/recommended",
-      eslintConfigPrettier,
-    ],
+    files: ["**/*.ts"],
+    ignores: ["node_modules", "dist", "build", "coverage"],
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 2022,
       globals: globals.browser,
       parserOptions: {
         project: ["./tsconfig.json"],
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    rules: {
-      "prettier/prettier": "error",
-    },
-  },
-
-  {
-    files: ["**/*.js", "**/*.mjs"],
-    ignores: ["node_modules/", "dist/", "build/", "coverage/", ".git/"],
     plugins: {
       prettier: eslintPluginPrettier,
     },
-    extends: [eslintConfigPrettier],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
     rules: {
       "prettier/prettier": "error",
     },
   },
-]);
+  {
+    files: ["eslint.config.js", "*.config.*", "vite.config.ts"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "module",
+    },
+    rules: {
+      // prevent type-aware rules here
+    },
+  },
+];
