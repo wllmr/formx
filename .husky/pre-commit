@@ -1,0 +1,5 @@
+#!/bin/sh
+
+bun run test
+bunx lint-staged
+
