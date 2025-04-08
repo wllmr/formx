@@ -19,11 +19,12 @@ describe("VString", () => {
   });
 
   it("should use the provided error message on invalid input", () => {
-    const customMessage = "Not a string!";
-    const validator = new VString(customMessage);
+    const validator = new VString("Not a string!");
     const result = validator.validate(123);
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe(customMessage);
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Not a string!"]),
+      );
     }
   });
 
@@ -31,7 +32,9 @@ describe("VString", () => {
     const validator = new VString();
     const result = validator.validate(123);
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Value must be a text");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Value must be a text"]),
+      );
     }
   });
 });

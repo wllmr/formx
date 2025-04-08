@@ -26,7 +26,9 @@ describe("VEmail", () => {
     const validator = new VEmail("Invalid email!");
     const result = validator.validate("not-an-email");
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Invalid email!");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Invalid email!"]),
+      );
     }
   });
 
@@ -34,7 +36,9 @@ describe("VEmail", () => {
     const validator = new VEmail();
     const result = validator.validate("nope");
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Value must be a valid email address");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Value must be a valid email address"]),
+      );
     }
   });
 });

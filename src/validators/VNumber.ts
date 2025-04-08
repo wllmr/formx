@@ -10,7 +10,10 @@ export class VNumber extends Validator {
       return { state: ValidationState.VALID };
     }
 
-    if (typeof value === "number" && !isNaN(value)) {
+    if (
+      (typeof value === "number" && !isNaN(value)) ||
+      (typeof value === "string" && value.length && !isNaN(Number(value)))
+    ) {
       return { state: ValidationState.VALID };
     }
 

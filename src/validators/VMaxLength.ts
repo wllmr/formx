@@ -17,6 +17,7 @@ export class VMaxLength extends Validator {
         return {
           state: ValidationState.INVALID,
           error: this.error,
+          forceErrors: true,
         };
       }
       return { state: ValidationState.VALID };
@@ -27,6 +28,7 @@ export class VMaxLength extends Validator {
         return {
           state: ValidationState.INVALID,
           error: this.error,
+          forceErrors: true,
         };
       }
       return { state: ValidationState.VALID };

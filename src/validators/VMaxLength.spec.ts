@@ -24,7 +24,7 @@ describe("VMaxLength", () => {
     const validator = new VMaxLength(2, "Too long!");
     const result = validator.validate("hello");
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Too long!");
+      expect(JSON.stringify(result.error)).toBe(JSON.stringify(["Too long!"]));
     }
   });
 
@@ -32,7 +32,9 @@ describe("VMaxLength", () => {
     const validator = new VMaxLength(2);
     const result = validator.validate("abc");
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Value must be at most 2 characters");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Value must be at most 2 characters"]),
+      );
     }
   });
 });

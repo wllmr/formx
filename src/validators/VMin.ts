@@ -9,11 +9,14 @@ export class VMin extends Validator {
   }
 
   validate(value: unknown): ValidationResult {
-    if (typeof value !== "number" || isNaN(value)) {
+    if (
+      (typeof value !== "number" || isNaN(value)) &&
+      (typeof value !== "string" || value === "" || isNaN(Number(value)))
+    ) {
       return { state: ValidationState.VALID };
     }
 
-    if (value >= this.min) {
+    if (Number(value) >= this.min) {
       return { state: ValidationState.VALID };
     }
 

@@ -23,7 +23,7 @@ describe("VMax", () => {
     const validator = new VMax(5, "Too high!");
     const result = validator.validate(6);
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Too high!");
+      expect(JSON.stringify(result.error)).toBe(JSON.stringify(["Too high!"]));
     }
   });
 
@@ -31,7 +31,9 @@ describe("VMax", () => {
     const validator = new VMax(3);
     const result = validator.validate(4);
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Value must be at most 3");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Value must be at most 3"]),
+      );
     }
   });
 });

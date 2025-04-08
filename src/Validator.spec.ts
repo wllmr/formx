@@ -22,7 +22,9 @@ class AlwaysInvalidValidator extends Validator {
 describe("Validator", () => {
   it("should store the error message", () => {
     const validator = new AlwaysValidValidator("Required field");
-    expect(validator.error).toBe("Required field");
+    expect(JSON.stringify(validator.error)).toBe(
+      JSON.stringify(["Required field"]),
+    );
   });
 
   it("should generate a comparator based on class name and error", () => {
@@ -41,7 +43,9 @@ describe("Validator", () => {
     const result = validator.validate("anything");
     expect(result.state).toBe(ValidationState.INVALID);
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("This is invalid");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["This is invalid"]),
+      );
     }
   });
 

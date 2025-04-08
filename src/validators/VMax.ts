@@ -9,11 +9,14 @@ export class VMax extends Validator {
   }
 
   validate(value: unknown): ValidationResult {
-    if (typeof value !== "number" || isNaN(value)) {
+    if (
+      (typeof value !== "number" || isNaN(value)) &&
+      (typeof value !== "string" || value === "" || isNaN(Number(value)))
+    ) {
       return { state: ValidationState.VALID };
     }
 
-    if (value <= this.max) {
+    if (Number(value) <= this.max) {
       return { state: ValidationState.VALID };
     }
 

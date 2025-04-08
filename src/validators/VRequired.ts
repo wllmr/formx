@@ -6,7 +6,7 @@ export class VRequired extends Validator {
   }
 
   validate(value: unknown): ValidationResult {
-    if (typeof value !== "undefined" && value !== null) {
+    if (!isEmptyValue(value)) {
       return { state: ValidationState.VALID };
     }
 
@@ -15,4 +15,13 @@ export class VRequired extends Validator {
       error: this.error,
     };
   }
+}
+
+function isEmptyValue(value: unknown): boolean {
+  return (
+    value === "" ||
+    value === null ||
+    value === undefined ||
+    (typeof value === "number" && isNaN(value))
+  );
 }

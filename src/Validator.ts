@@ -10,7 +10,7 @@ export interface ValidationResultValid {
 
 export interface ValidationResultInvalid {
   state: ValidationState.INVALID;
-  error: string;
+  error: string[];
   forceErrors?: boolean;
 }
 
@@ -25,10 +25,10 @@ export type ValidationResult =
 
 export abstract class Validator {
   protected id: string;
-  error: string;
+  error: string[];
 
   constructor(error: string) {
-    this.error = error;
+    this.error = [error];
     this.id = this.constructor.name;
   }
 

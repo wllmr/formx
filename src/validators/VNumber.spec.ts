@@ -9,7 +9,7 @@ describe("VNumber", () => {
     ["negative number", -42, ValidationState.VALID],
     ["decimal", 3.14, ValidationState.VALID],
     ["NaN", NaN, ValidationState.INVALID],
-    ["string number", "123", ValidationState.INVALID],
+    ["string number", "123", ValidationState.VALID],
     ["empty string", "", ValidationState.INVALID],
     ["boolean true", true, ValidationState.INVALID],
     ["boolean false", false, ValidationState.INVALID],
@@ -27,7 +27,9 @@ describe("VNumber", () => {
     const validator = new VNumber("Must be numeric!");
     const result = validator.validate("abc");
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Must be numeric!");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Must be numeric!"]),
+      );
     }
   });
 
@@ -35,7 +37,9 @@ describe("VNumber", () => {
     const validator = new VNumber();
     const result = validator.validate("not a number");
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Value must be a number");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Value must be a number"]),
+      );
     }
   });
 });

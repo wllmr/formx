@@ -24,7 +24,17 @@ describe("VMinLength", () => {
     const validator = new VMinLength(5, "Too short!");
     const result = validator.validate("hey");
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Too short!");
+      expect(JSON.stringify(result.error)).toBe(JSON.stringify(["Too short!"]));
+    }
+  });
+
+  it("should use the default error message", () => {
+    const validator = new VMinLength(5);
+    const result = validator.validate(3);
+    if (result.state === ValidationState.INVALID) {
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Value must be at least 5 characters"]),
+      );
     }
   });
 });

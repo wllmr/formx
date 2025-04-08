@@ -5,7 +5,7 @@ import { VRequired } from "./VRequired";
 describe("VRequired", () => {
   it.each([
     ["non-empty string", "hello", ValidationState.VALID],
-    ["empty string", "", ValidationState.VALID],
+    ["empty string", "", ValidationState.INVALID],
     ["zero", 0, ValidationState.VALID],
     ["false boolean", false, ValidationState.VALID],
     ["empty array", [], ValidationState.VALID],
@@ -22,7 +22,9 @@ describe("VRequired", () => {
     const validator = new VRequired("This field is required!");
     const result = validator.validate(undefined);
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("This field is required!");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["This field is required!"]),
+      );
     }
   });
 
@@ -30,7 +32,9 @@ describe("VRequired", () => {
     const validator = new VRequired();
     const result = validator.validate(null);
     if (result.state === ValidationState.INVALID) {
-      expect(result.error).toBe("Value is required");
+      expect(JSON.stringify(result.error)).toBe(
+        JSON.stringify(["Value is required"]),
+      );
     }
   });
 });
