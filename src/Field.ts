@@ -8,14 +8,17 @@ import {
   switchMap,
   toArray,
 } from "rxjs";
+import { type Form } from "./Form";
 import { ValidationResult, ValidationState, Validator } from "./Validator";
 
 export class Field<T> {
+  form?: Form;
   element: HTMLElement;
   name: string;
   value$: BehaviorSubject<T>;
-  error$: BehaviorSubject<string | undefined>;
+  error$: BehaviorSubject<string[] | undefined>;
   touched$: BehaviorSubject<boolean>;
+  forceErrors = false;
 
   static create<T>(
     element: string | HTMLElement,
@@ -42,7 +45,7 @@ export class Field<T> {
     this.element = element;
     this.name = name;
     this.value$ = new BehaviorSubject(initialValue);
-    this.error$ = new BehaviorSubject<string | undefined>(undefined);
+    this.error$ = new BehaviorSubject<string[] | undefined>(undefined);
     this.touched$ = new BehaviorSubject(false);
 
     this.value$
@@ -56,8 +59,27 @@ export class Field<T> {
       });
   }
 
+  setForm(form: Form) {
+    this.form = form;
+  }
+
+  getValue(): T {
+    return this.value$.getValue();
+  }
+
   setValue(value: T) {
     this.value$.next(value);
+  }
+
+  setValidators(validators: Validator[]) {
+    this.validators = validators;
+    this.runValidators(this.getValue()).subscribe((result) => {
+      if (result.state === ValidationState.INVALID) {
+        this.error$.next(result.error);
+      } else {
+        this.error$.next(undefined);
+      }
+    });
   }
 
   markTouched() {
@@ -72,12 +94,13 @@ export class Field<T> {
     const observables = this.validators.map((validator) => {
       try {
         const result = validator.validate(value);
+
         return result instanceof Promise
           ? from(result).pipe(
               catchError(() =>
                 of<ValidationResult>({
                   state: ValidationState.INVALID,
-                  error: validator.error,
+                  error: ["VALIDATION_ERROR"],
                 }),
               ),
             )
@@ -85,7 +108,7 @@ export class Field<T> {
       } catch {
         return of<ValidationResult>({
           state: ValidationState.INVALID,
-          error: validator.error,
+          error: ["VALIDATION_ERROR"],
         });
       }
     });
@@ -94,26 +117,45 @@ export class Field<T> {
       switchMap((v$) => v$),
       toArray(),
       map((results) => {
-        const pending = results.find(
-          (r) => r.state === ValidationState.PENDING,
+        const pendingResult = results.find(
+          (result) => result?.state === ValidationState.PENDING,
         );
-        if (pending) return pending;
 
-        const invalid = results.find(
-          (r) => r.state === ValidationState.INVALID,
-        );
-        if (invalid) return invalid;
+        if (typeof pendingResult !== "undefined") {
+          return pendingResult;
+        }
+
+        // const invalidResults = results.filter(
+        //   (result) => result?.state === ValidationState.INVALID
+        // );
+
+        // if (invalidResults) {
+        //   return {
+        //     state: ValidationState.INVALID,
+        //     error: invalidResults.flatMap((result) => result.error),
+        //     forceError: invalidResults.some(
+        //       (result) => result.forceErrors === true
+        //     ),
+        //   };
+        // }
+
+        const invalidResult =
+          results.find(
+            (result) =>
+              result?.state === ValidationState.INVALID && result.forceErrors,
+          ) ||
+          results.find((result) => result?.state === ValidationState.INVALID);
+
+        if (typeof invalidResult !== "undefined") {
+          return invalidResult;
+        }
 
         return { state: ValidationState.VALID };
       }),
     );
   }
 
-  getValue(): T {
-    return this.value$.getValue();
-  }
-
-  getError(): string | undefined {
+  getErrors(): string[] | undefined {
     return this.error$.getValue();
   }
 }
