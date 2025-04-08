@@ -7,7 +7,8 @@ import {
   of,
   switchMap,
 } from "rxjs";
-import { Field } from "./Field";
+import { Field, FieldResultInvalid } from "./Field";
+import { ValidationState } from "./Validator";
 
 export interface FormSubmitValid {
   valid: true;
@@ -20,12 +21,11 @@ export interface FormSubmitInvalid {
 }
 
 export class Form {
+  #fields: Map<string, Field<any>>;
+  #fields$: BehaviorSubject<Map<string, Field<any>>>;
   element: HTMLFormElement;
-  #fields = new Map<string, Field<any>>();
-  #fields$ = new BehaviorSubject(this.#fields);
-  submitted$ = new BehaviorSubject<
-    FormSubmitValid | FormSubmitInvalid | undefined
-  >(undefined);
+  submitted$: BehaviorSubject<FormSubmitValid | FormSubmitInvalid | undefined>;
+  isSubmitted$: BehaviorSubject<boolean>;
 
   static create(element: string | HTMLFormElement) {
     const _element =
@@ -43,37 +43,40 @@ export class Form {
   }
 
   private constructor(element: HTMLFormElement) {
+    this.#fields = new Map<string, Field<any>>();
+    this.#fields$ = new BehaviorSubject(this.#fields);
     this.element = element;
+    this.submitted$ = new BehaviorSubject<
+      FormSubmitValid | FormSubmitInvalid | undefined
+    >(undefined);
+    this.isSubmitted$ = new BehaviorSubject(false);
+
     this.element.addEventListener("submit", (e) => {
       e.preventDefault();
       this.submit();
     });
   }
 
-  registerField(field: Field<any>) {
-    this.#fields.set(field.name, field);
-    this.#fields$.next(new Map(this.#fields));
-    field.setForm(this);
-  }
-
-  unregisterField(name: string) {
-    this.#fields.delete(name);
-    this.#fields$.next(new Map(this.#fields));
-  }
-
-  getValue(name: string) {
-    return this.#fields.get(name)?.getValue();
-  }
-
-  getAllValues() {
+  get #values() {
     const values: Record<string, any> = {};
     this.#fields.forEach((field, name) => {
-      values[name] = field.getValue();
+      values[name] = field.value;
     });
     return values;
   }
 
-  getAllErrors$(): Observable<Record<string, string[]>> {
+  get #isValid() {
+    for (const field of this.#fields.values()) {
+      const { state } = field.result$.getValue();
+
+      if (state !== ValidationState.VALID) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  get errors$(): Observable<Record<string, string[]>> {
     return this.#fields$.pipe(
       switchMap((fieldsMap) => {
         const entries = Array.from(fieldsMap.entries());
@@ -84,7 +87,12 @@ export class Form {
 
         return combineLatest(
           entries.map(([name, field]) =>
-            field.error$.pipe(map((errors) => [name, errors] as const)),
+            field.result$.pipe(
+              map(
+                (result) =>
+                  [name, (result as FieldResultInvalid).error ?? []] as const,
+              ),
+            ),
           ),
         ).pipe(
           map((pairs) => {
@@ -101,15 +109,15 @@ export class Form {
     );
   }
 
-  isValid() {
-    for (const field of this.#fields.values()) {
-      const errors = field.getErrors();
+  registerField(field: Field<any>) {
+    this.#fields.set(field.name, field);
+    this.#fields$.next(new Map(this.#fields));
+    field.form = this;
+  }
 
-      if (Array.isArray(errors) && errors.length) {
-        return false;
-      }
-    }
-    return true;
+  unregisterField(name: string) {
+    this.#fields.delete(name);
+    this.#fields$.next(new Map(this.#fields));
   }
 
   reset() {
@@ -122,16 +130,18 @@ export class Form {
   }
 
   submit() {
+    this.isSubmitted$.next(true);
+
     let errors = {};
 
-    this.getAllErrors$().subscribe((errorMap) => {
-      errors = errorMap;
+    this.errors$.subscribe((_errors) => {
+      errors = _errors;
     });
 
-    if (this.isValid()) {
+    if (this.#isValid) {
       this.submitted$.next({
         valid: true,
-        values: this.getAllValues(),
+        values: this.#values,
       });
     } else {
       this.submitted$.next({

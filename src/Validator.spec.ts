@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { ValidationResult, ValidationState, Validator } from "./Validator";
+import { ValidationState, Validator, ValidatorResult } from "./Validator";
 
 // 🔧 A simple mock validator that always returns VALID
 class AlwaysValidValidator extends Validator {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  validate(_: unknown): ValidationResult {
+  validate(_: unknown): ValidatorResult {
     return { state: ValidationState.VALID };
   }
 }
 
 class AlwaysInvalidValidator extends Validator {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  validate(_: unknown): ValidationResult {
+  validate(_: unknown): ValidatorResult {
     return {
       state: ValidationState.INVALID,
       error: this.error,

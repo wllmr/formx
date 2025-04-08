@@ -1,4 +1,4 @@
-import { ValidationResult, ValidationState, Validator } from "../Validator";
+import { ValidationState, Validator, ValidatorResult } from "../Validator";
 
 export class VMax extends Validator {
   max: number;
@@ -8,7 +8,7 @@ export class VMax extends Validator {
     this.max = max;
   }
 
-  validate(value: unknown): ValidationResult {
+  validate(value: unknown): ValidatorResult {
     if (
       (typeof value !== "number" || isNaN(value)) &&
       (typeof value !== "string" || value === "" || isNaN(Number(value)))

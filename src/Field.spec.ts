@@ -13,32 +13,32 @@ describe("Field", () => {
 
   it("should initialize with initial value and no error", () => {
     const field = Field.create(input, "username", "hello", []);
-    expect(field.getValue()).toBe("hello");
-    expect(field.getErrors()).toBeUndefined();
+    expect(field.value).toBe("hello");
+    expect(field.errors).toBeUndefined();
   });
 
   it("should validate with error on empty string", async () => {
     const field = Field.create(input, "username", "", [new VRequired()]);
 
-    // wait for validation to propagate
-    await new Promise((res) => setTimeout(res, 10));
+    field.markAsTouched();
 
-    expect(JSON.stringify(field.getErrors())).toBe(
+    expect(JSON.stringify(field.errors)).toBe(
       JSON.stringify(["Value is required"]),
     );
   });
 
   it("should clear error on valid input", async () => {
     const field = Field.create(input, "username", "", [new VRequired()]);
+    field.markAsTouched();
 
-    await new Promise((res) => setTimeout(res, 10));
-    expect(JSON.stringify(field.getErrors())).toBe(
+    expect(JSON.stringify(field.errors)).toBe(
       JSON.stringify(["Value is required"]),
     );
 
-    field.setValue("hello");
-
     await new Promise((res) => setTimeout(res, 10));
-    expect(JSON.stringify(field.getErrors())).toBeUndefined();
+
+    field.value = "hello";
+
+    expect(JSON.stringify(field.errors)).toBeUndefined();
   });
 });

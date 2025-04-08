@@ -1,11 +1,11 @@
-import { ValidationResult, ValidationState, Validator } from "../Validator";
+import { ValidationState, Validator, ValidatorResult } from "../Validator";
 
 export class VRequired extends Validator {
   constructor(error: string = "Value is required") {
     super(error);
   }
 
-  validate(value: unknown): ValidationResult {
+  validate(value: unknown): ValidatorResult {
     if (!isEmptyValue(value)) {
       return { state: ValidationState.VALID };
     }

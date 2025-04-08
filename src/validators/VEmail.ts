@@ -1,4 +1,4 @@
-import { ValidationResult, ValidationState, Validator } from "../Validator";
+import { ValidationState, Validator, ValidatorResult } from "../Validator";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -7,7 +7,7 @@ export class VEmail extends Validator {
     super(error);
   }
 
-  validate(value: unknown): ValidationResult {
+  validate(value: unknown): ValidatorResult {
     if (typeof value !== "string") {
       return { state: ValidationState.VALID };
     }

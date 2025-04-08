@@ -1,6 +1,6 @@
 # **Formx 🚀**
 
-This is a **Vite + React + TypeScript** template with best practices for **development, linting, formatting, testing, and automation**.
+Testing to create a form using rxjs events. Might try to implement some react integration later on.
 
 ---
 
@@ -8,6 +8,7 @@ This is a **Vite + React + TypeScript** template with best practices for **devel
 
 | Command         | Description                                        |
 | --------------- | -------------------------------------------------- |
+| `dev`           | Runs the example project with Vite.                |
 | `build`         | Builds the project with Vite.                      |
 | `lint`          | Runs ESLint to check for code quality issues.      |
 | `format`        | Formats the codebase using Prettier.               |

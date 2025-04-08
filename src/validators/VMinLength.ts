@@ -1,4 +1,4 @@
-import { ValidationResult, ValidationState, Validator } from "../Validator";
+import { ValidationState, Validator, ValidatorResult } from "../Validator";
 
 export class VMinLength extends Validator {
   minLength: number;
@@ -11,7 +11,7 @@ export class VMinLength extends Validator {
     this.minLength = minLength;
   }
 
-  validate(value: unknown): ValidationResult {
+  validate(value: unknown): ValidatorResult {
     if (typeof value === "string") {
       if (value.length < this.minLength) {
         return {

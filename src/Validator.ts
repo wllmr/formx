@@ -4,24 +4,24 @@ export enum ValidationState {
   PENDING = "PENDING",
 }
 
-export interface ValidationResultValid {
+export interface ValidatorResultValid {
   state: ValidationState.VALID;
 }
 
-export interface ValidationResultInvalid {
+export interface ValidatorResultInvalid {
   state: ValidationState.INVALID;
   error: string[];
   forceErrors?: boolean;
 }
 
-export interface ValidationResultPending {
+export interface ValidatorResultPending {
   state: ValidationState.PENDING;
 }
 
-export type ValidationResult =
-  | ValidationResultValid
-  | ValidationResultInvalid
-  | ValidationResultPending;
+export type ValidatorResult =
+  | ValidatorResultValid
+  | ValidatorResultInvalid
+  | ValidatorResultPending;
 
 export abstract class Validator {
   protected id: string;
@@ -36,7 +36,5 @@ export abstract class Validator {
     return this.id + "_" + this.error;
   }
 
-  abstract validate(
-    value: unknown,
-  ): ValidationResult | Promise<ValidationResult>;
+  abstract validate(value: unknown): ValidatorResult | Promise<ValidatorResult>;
 }

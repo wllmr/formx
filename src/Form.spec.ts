@@ -25,19 +25,10 @@ describe("Form", () => {
     const field = Field.create(inputEl, "name", "John");
     form.registerField(field);
 
-    expect(form.getValue("name")).toBe("John");
-  });
+    form.submit();
 
-  it("returns all values", () => {
-    const field1 = Field.create(inputEl, "a", 123);
-    const field2 = Field.create(inputEl, "b", "hello");
-
-    form.registerField(field1);
-    form.registerField(field2);
-
-    expect(form.getAllValues()).toEqual({
-      a: 123,
-      b: "hello",
+    form.submitted$.subscribe((result) => {
+      expect((result as FormSubmitValid).values.name).toBe("John");
     });
   });
 
@@ -46,17 +37,11 @@ describe("Form", () => {
     form.registerField(field);
     form.unregisterField("name");
 
-    expect(form.getValue("name")).toBeUndefined();
-  });
+    form.submit();
 
-  it("isValid returns false if any field has an error", async () => {
-    const field = Field.create(inputEl, "email", "", [new VRequired()]);
-    form.registerField(field);
-
-    // wait for validation to propagate
-    await new Promise((r) => setTimeout(r, 10));
-
-    expect(form.isValid()).toBe(false);
+    form.submitted$.subscribe((result) => {
+      expect((result as FormSubmitValid).values.name).toBeUndefined();
+    });
   });
 
   it("submit returns correct invalid result", async () => {
@@ -65,9 +50,9 @@ describe("Form", () => {
     form.registerField(field1);
     form.registerField(field2);
 
-    await new Promise((r) => setTimeout(r, 10));
-
     form.submit();
+
+    await new Promise((resolve) => setTimeout(resolve, 0)); // wait microtask
 
     form.submitted$.subscribe((result) => {
       expect((result as FormSubmitInvalid).valid).toBe(false);
@@ -84,8 +69,6 @@ describe("Form", () => {
     const field2 = Field.create(inputEl, "username", "user123");
     form.registerField(field1);
     form.registerField(field2);
-
-    await new Promise((r) => setTimeout(r, 10));
 
     form.submit();
 

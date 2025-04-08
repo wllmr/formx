@@ -1,4 +1,4 @@
-import { ValidationResult, ValidationState, Validator } from "../Validator";
+import { ValidationState, Validator, ValidatorResult } from "../Validator";
 
 export class VMaxLength extends Validator {
   maxLength: number;
@@ -11,7 +11,7 @@ export class VMaxLength extends Validator {
     this.maxLength = maxLength;
   }
 
-  validate(value: unknown): ValidationResult {
+  validate(value: unknown): ValidatorResult {
     if (typeof value === "string") {
       if (value.length > this.maxLength) {
         return {

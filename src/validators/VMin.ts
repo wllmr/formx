@@ -1,4 +1,4 @@
-import { ValidationResult, ValidationState, Validator } from "../Validator";
+import { ValidationState, Validator, ValidatorResult } from "../Validator";
 
 export class VMin extends Validator {
   min: number;
@@ -8,7 +8,7 @@ export class VMin extends Validator {
     this.min = min;
   }
 
-  validate(value: unknown): ValidationResult {
+  validate(value: unknown): ValidatorResult {
     if (
       (typeof value !== "number" || isNaN(value)) &&
       (typeof value !== "string" || value === "" || isNaN(Number(value)))

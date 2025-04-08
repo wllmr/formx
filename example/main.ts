@@ -1,5 +1,6 @@
 import { Field } from "../src/Field";
 import { Form } from "../src/Form";
+import { ValidationState } from "../src/Validator";
 import { VEmail } from "../src/validators/VEmail";
 import { VMax } from "../src/validators/VMax";
 import { VMin } from "../src/validators/VMin";
@@ -41,11 +42,20 @@ function createErrorId(fieldId: string, str: string): string {
   // Listen to input events and update the field value
   inputEl?.addEventListener("input", (e) => {
     const target = e.target as HTMLInputElement;
-    field.setValue(target.value);
+    field.value = target.value;
   });
 
-  field.error$.subscribe((errors) => {
-    const currentErrors = errors ?? [];
+  inputEl?.addEventListener("blur", () => {
+    field.markAsTouched();
+  });
+
+  field.result$.subscribe((result) => {
+    const currentErrors =
+      (result.state === ValidationState.INVALID &&
+        result.showErrors &&
+        result.error) ||
+      [];
+
     const currentIds = new Set(
       currentErrors.map((err) => createErrorId(id, err)),
     );

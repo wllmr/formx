@@ -1,11 +1,11 @@
-import { ValidationResult, ValidationState, Validator } from "../Validator";
+import { ValidationState, Validator, ValidatorResult } from "../Validator";
 
 export class VString extends Validator {
   constructor(error: string = "Value must be a text") {
     super(error);
   }
 
-  validate(value: unknown): ValidationResult {
+  validate(value: unknown): ValidatorResult {
     if (typeof value === "undefined" || value === null) {
       return { state: ValidationState.VALID };
     }
