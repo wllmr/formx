@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Form Test</title>
+  </head>
+  <body>
+    <form id="my-form">
+      <div class="fieldset">
+        <label for="email">Email</label>
+        <input id="email" name="email" />
+        <div id="email-errors" class="input-errors"></div>
+      </div>
+
+      <div class="fieldset">
+        <label for="name">Name</label>
+        <input id="name" name="name" />
+        <div id="name-errors" class="input-errors"></div>
+      </div>
+
+      <div class="fieldset">
+        <label for="age">Age</label>
+        <input id="age" name="age" type="number" />
+        <div id="age-errors" class="input-errors"></div>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

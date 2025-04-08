@@ -5,8 +5,14 @@ import tseslint from "typescript-eslint";
 export default [
   ...tseslint.configs.recommended,
   {
-    files: ["**/*.ts"],
-    ignores: ["node_modules", "dist", "build", "coverage"],
+    files: ["**/*.{js, ts}"],
+    ignores: [
+      "node_modules",
+      "dist",
+      "build",
+      "coverage",
+      "**/*.config.{js,ts}",
+    ],
     languageOptions: {
       ecmaVersion: 2022,
       globals: globals.browser,

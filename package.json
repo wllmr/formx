@@ -32,6 +32,7 @@
   "packageManager": "bun@latest",
   "private": true,
   "scripts": {
+    "dev": "vite",
     "build": "vite build && tsc",
     "test": "vitest",
     "test:run": "vitest --run",
